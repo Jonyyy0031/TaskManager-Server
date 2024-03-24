@@ -6,8 +6,10 @@ import { connection } from "../config/config.js";
 const getRoles = (request, response) => {
     connection.query("SELECT * FROM roles",
     (error, results) => {
-        if(error)
-            throw error;
+        if(error){
+            console.log(error);
+            return response.status(500).json({ error: "Error de servidor" });
+            }
         response.status(200).json(results);
     });
 };
@@ -18,8 +20,10 @@ const postRoles = (request, response) => {
     connection.query("INSERT INTO roles (ID_Rol, Nombre) VALUES (?,?)", 
     [ID_Rol, Nombre],
     (error, results) => {
-        if(error)
-            throw error;
+        if(error){
+            console.log(error);
+            return response.status(500).json({ error: "Error de servidor" });
+            }
         response.status(201).json({"Rol añadido correctamente": results.affectedRows});
     });
 };
@@ -29,8 +33,10 @@ const updateRoles = (request, response) => {
     connection.query("UPDATE roles SET Nombre = IFNULL(?, Nombre) WHERE ID_Rol = ?", 
         [Nombre, ID_Rol],
         (error, results) => {
-            if(error)
-                throw error;
+            if(error){
+                console.log(error);
+                return response.status(500).json({ error: "Error de servidor" });
+                }
             response.status(201).json({"Rol editado correctamente": results.affectedRows});
         });
 }
@@ -41,8 +47,10 @@ const delRoles = (request, response) => {
     connection.query("DELETE FROM roles WHERE ID_Rol = ?",
      [ID_Rol],
     (error, results) => {
-        if(error)
-            throw error;
+        if(error){
+            console.log(error);
+            return response.status(500).json({ error: "Error de servidor" });
+            }
         response.status(201).json({"Rol eliminado":results.affectedRows});
     });
 };

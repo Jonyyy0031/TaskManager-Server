@@ -12,7 +12,7 @@ const login = (req, res) => {
     [email],
     (error, results) => {
       if (error) {
-        console.error(error);
+        console.log(error);
         return res.status(500).json({ error: "Error de servidor" });
       }
 

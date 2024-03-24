@@ -6,8 +6,10 @@ import { connection } from "../config/config.js";
 const getUsuarios = (request, response) => {
     connection.query("SELECT * FROM usuarios",
     (error, results) => {
-        if(error)
-            throw error;
+        if(error){
+            console.log(error);
+            return response.status(500).json({ error: "Error de servidor" });
+            }
         response.status(200).json(results);
     });
 };
@@ -17,8 +19,10 @@ const postUsuario = (request, response) => {
     connection.query("INSERT INTO usuarios (ID_Rol, Username, Password) VALUES (?,?,?)", 
     [ID_Rol, Username, Password],
     (error, results) => {
-        if(error)
-            throw error;
+        if(error){
+            console.log(error);
+            return response.status(500).json({ error: "Error de servidor" });
+            }
         response.status(201).json({"Usuario añadido correctamente": results.affectedRows});
     });
 };
@@ -27,22 +31,29 @@ const postUsuarioRegister = (request, response) => {
     const { username, email, password } = request.body;
     const ID_Rol = 1000;
     connection.query(
-        "SELECT * FROM usuarios WHERE Username = ?",
-        [username],
+        "SELECT * FROM usuarios WHERE Username = ? OR email = ?",
+        [username, email],
         (error, results) => {
-            if (error) {
-                throw error;
-            }
+            if(error){
+        console.log(error);
+                return response.status(500).json({ error: "Error de servidor" });
+                }        
             if (results.length > 0) {
-                response.status(400).json({ error: "El nombre de usuario ya está en uso" });
+                const existingUser = results.find(user => user.Username === username);
+                if (existingUser) {
+                    response.status(400).json({ error: "El nombre de usuario ya está en uso" });
+                } else {
+                    response.status(400).json({ error: "El correo electrónico ya está en uso" });
+                }
             } else {
                 connection.query(
                     "INSERT INTO usuarios (ID_Rol, username, email, password) VALUES (?, ?, ?, ?)",
                     [ID_Rol, username, email, password],
                     (error, results) => {
-                        if (error) {
-                            throw error;
-                        }
+                        if(error){
+                            console.log(error);
+                            return response.status(500).json({ error: "Error de servidor" });
+                            }
                         response.status(201).json({ "Usuario añadido correctamente": results.affectedRows });
                     }
                 );
@@ -50,6 +61,7 @@ const postUsuarioRegister = (request, response) => {
         }
     );
 };
+
 
 const updateUsuario = (request, response) => {
     const UsuarioID = request.params.ID_Usuario;
