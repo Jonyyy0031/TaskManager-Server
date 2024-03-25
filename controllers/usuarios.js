@@ -54,7 +54,7 @@ const postUsuarioRegister = (request, response) => {
                             console.log(error);
                             return response.status(500).json({ error: "Error de servidor" });
                             }
-                        response.status(201).json({ "Usuario añadido correctamente": results.affectedRows });
+                        response.status(201).json({ "Usuario añadido correctamente": results });
                     }
                 );
             }
@@ -65,12 +65,14 @@ const postUsuarioRegister = (request, response) => {
 
 const updateUsuario = (request, response) => {
     const UsuarioID = request.params.ID_Usuario;
-    const {ID_Rol, Username, Password} = request.body;
-    connection.query("UPDATE usuarios SET ID_Rol = IFNULL(?,ID_Rol), Username = IFNULL(?,Username), Password = IFNULL(?,Password) WHERE UsuarioID = ?", 
-        [ID_Rol, Username, Password, UsuarioID],
+    const {ID_Rol, Username, Email, Password} = request.body;
+    connection.query("UPDATE usuarios SET ID_Rol = IFNULL(?,ID_Rol), Username = IFNULL(?,Username), Email = IFNULL(?,Email), Password = IFNULL(?,Password) WHERE ID_Usuario = ?", 
+        [ID_Rol, Username, Email, Password, UsuarioID],
         (error, results) => {
-            if(error)
-                throw error;
+            if(error){
+                console.log(error);
+                return response.status(500).json({ error: "Error de servidor" });
+                }
             response.status(201).json({"Usuario editado correctamente": results.affectedRows});
         });
 };
@@ -80,8 +82,10 @@ const delUsuarios = (request, response) => {
     connection.query("DELETE FROM usuarios WHERE ID_Usuario = ?",
      [ID_Usuario],
     (error, results) => {
-        if(error)
-            throw error;
+        if(error){
+            console.log(error);
+            return response.status(500).json({ error: "Error de servidor" });
+            }
         response.status(201).json({"Usuario eliminado":results.affectedRows});
     });
 };

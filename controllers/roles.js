@@ -29,9 +29,10 @@ const postRoles = (request, response) => {
 };
 
 const updateRoles = (request, response) => {
-    const {ID_Rol, Nombre} = request.body;
+    const RolID = request.params.ID_Rol;
+    const {Nombre} = request.body;
     connection.query("UPDATE roles SET Nombre = IFNULL(?, Nombre) WHERE ID_Rol = ?", 
-        [Nombre, ID_Rol],
+        [Nombre, RolID],
         (error, results) => {
             if(error){
                 console.log(error);

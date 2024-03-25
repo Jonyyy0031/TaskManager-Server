@@ -5,7 +5,7 @@ const router = Router();
 
 router.get("/tareas", getTareas);
 router.post("/tareas", postTareas);
-router.patch("tareas/:ID_Tarea", updateTareas);
+router.patch("/tareas/:ID_Tarea", updateTareas);
 router.delete("/tareas/:ID_Tarea", delTareas);
 
 export default router;
