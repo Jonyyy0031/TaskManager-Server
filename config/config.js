@@ -6,7 +6,7 @@ import mysql from "mysql"
 let connection;
 
 try {
-    connection = mysql.createConnection({
+    connection = await mysql.createConnection({
         host: process.env.DBHOST,
         user: process.env.DBUSER,
         password: process.env.DBPASS,

@@ -3,8 +3,8 @@ dotenv.config();
 
 import { connection } from "../config/config.js";
 
-const getUsuarios = (request, response) => {
-  connection.query(
+const getUsuarios =  async (request, response) => {
+  await connection.query(
     "SELECT * FROM usuarios INNER JOIN roles WHERE usuarios.ID_Rol = roles.ID_Rol",
     (error, results) => {
       if (error) {
@@ -16,9 +16,9 @@ const getUsuarios = (request, response) => {
   );
 };
 
-const getUsuariobyID = (request, response) => {
+const getUsuariobyID = async (request, response) => {
   const UsuarioID = request.params.ID_Usuario;
-  connection.query(
+  await connection.query(
     "SELECT * FROM usuarios WHERE ID_Usuario = ?",
     [UsuarioID],
     (error, results) => {
@@ -31,7 +31,7 @@ const getUsuariobyID = (request, response) => {
   );
 };
 
-const postUsuario = (request, response) => {
+const postUsuario = async (request, response) => {
   const { ID_Rol, email, username, password } = request.body;
   const fechaact = new Date();
   const dia = fechaact.getDate().toString().padStart(2, "0");
@@ -43,7 +43,7 @@ const postUsuario = (request, response) => {
   const imagen = request.files ? request.files.imagen : null;
   let imagenPath = null;
 
-  connection.query(
+ await connection.query(
     "SELECT * FROM usuarios WHERE Username = ? OR email = ?",
     [username, email],
     (error, results) => {
@@ -158,10 +158,10 @@ const postUsuarioRegister = (request, response) => {
   );
 };
 
-const updateUsuario = (request, response) => {
+const updateUsuario = async (request, response) => {
   const UsuarioID = request.params.ID_Usuario;
   const { ID_Rol, username, email, password } = request.body;
-  connection.query(
+  await connection.query(
     "UPDATE usuarios SET ID_Rol = IFNULL(?,ID_Rol), Username = IFNULL(?,Username), Email = IFNULL(?,Email), Password = IFNULL(?,Password), Fechareg = Fechareg WHERE ID_Usuario = ?",
     [ID_Rol, username, email, password, UsuarioID],
     (error, results) => {
@@ -176,9 +176,9 @@ const updateUsuario = (request, response) => {
   );
 };
 
-const delUsuarios = (request, response) => {
+const delUsuarios = async (request, response) => {
   const ID_Usuario = request.params.ID_Usuario;
-  connection.query(
+  await connection.query(
     "DELETE FROM usuarios WHERE ID_Usuario = ?",
     [ID_Usuario],
     (error, results) => {

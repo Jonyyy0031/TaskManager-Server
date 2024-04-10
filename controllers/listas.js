@@ -3,8 +3,8 @@ dotenv.config();
 
 import { connection } from "../config/config.js";
 
-const getRoles = async (request, response) => {
-  await connection.query("SELECT * FROM roles", (error, results) => {
+const getListas = async (request, response) => {
+   await connection.query("SELECT * FROM listas", (error, results) => {
     if (error) {
       console.log(error);
       return response.status(500).json({ error: "Error de servidor" });
@@ -13,11 +13,11 @@ const getRoles = async (request, response) => {
   });
 };
 
-const getNombreRolbyID = async (request, response) => {
-  const RolID = request.params.ID_Rol;
-  await connection.query(
-    "SELECT Nombre FROM roles WHERE ID_Rol = ?",
-    [RolID],
+const getNombreListabyID = async (request, response) => {
+  const ListaID = request.params.ID_Lista;
+   await connection.query(
+    "SELECT Nombre FROM roles WHERE ID_Lista = ?",
+    [ListaID],
     (error, results) => {
       if (error) {
         console.log(error);
@@ -28,9 +28,9 @@ const getNombreRolbyID = async (request, response) => {
   );
 };
 
-const postRoles = async (request, response) => {
-  const {Nombre} = request.body;
-  await connection.query(
+const postListas = async (request, response) => {
+  const { Nombre } = request.body;
+   await connection.query(
     "SELECT * FROM roles WHERE Nombre = ?",
     [Nombre],
     (error, results) => {
@@ -59,7 +59,7 @@ const postRoles = async (request, response) => {
   );
 };
 
-const updateRoles = async (request, response) => {
+const updateListas = async (request, response) => {
   const RolID = request.params.ID_Rol;
   const { Nombre } = request.body;
   await connection.query(
@@ -74,7 +74,9 @@ const updateRoles = async (request, response) => {
       const count = results[0].count;
 
       if (count > 0) {
-        return response.status(400).json({ error: "El nombre del rol ya existe" });
+        return response
+          .status(400)
+          .json({ error: "El nombre del rol ya existe" });
       }
 
       connection.query(
@@ -94,20 +96,19 @@ const updateRoles = async (request, response) => {
   );
 };
 
-
-const delRoles = async (request, response) => {
-  const ID_Rol = request.params.ID_Rol;
- await connection.query(
+const delListas = async (request, response) => {
+  const ID_Lista = request.params.ID_Lista;
+  await connection.query(
     "DELETE FROM roles WHERE ID_Rol = ?",
-    [ID_Rol],
+    [ID_Lista],
     (error, results) => {
       if (error) {
         console.log(error);
         return response.status(500).json({ error: "Error de servidor" });
       }
-      response.status(201).json({ "Rol eliminado": results.affectedRows });
+      response.status(201).json({ "Lista eliminada": results.affectedRows });
     }
   );
 };
 
-export { getRoles, getNombreRolbyID, postRoles, updateRoles, delRoles };
+export { getListas, getNombreListabyID, postListas, updateListas, delListas };

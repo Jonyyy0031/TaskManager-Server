@@ -1,6 +1,5 @@
-// Importa los módulos necesarios
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken"
 import { connection } from "../config/config.js";
 
 dotenv.config();
@@ -23,11 +22,8 @@ const login = (req, res) => {
       const user = results[0];
 
       if (password === user.Password) {
-        const token = jwt.sign(
-          { ID_Usuario: user.ID_Usuario, email: user.email },
-          "tu_secreto",
-          { expiresIn: "1h" }
-        );
+        console.log(user)
+        const token = jwt.sign({ userID: user.ID_Usuario }, process.env.JWT_SECRET, { expiresIn: '5m' });
         return res.status(200).json({ token, ID_Rol: user.ID_Rol });
       } else {
         return res.status(401).json({ error: "Credenciales inválidas" });
