@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import path from "path"
 dotenv.config();
 
 import { connection } from "../config/config.js";
@@ -37,7 +38,15 @@ const postUsuario = async (request, response) => {
   const fechareg = new Date().toISOString().slice(0, 10);
   const hashpassword = await encrypt(password);
 
- await connection.query(
+  if (!request.file) {
+    return response.status(400).json({ error: "No se ha proporcionado ninguna imagen" });
+  }
+
+
+  const imagePath = request.file.path.replace(/\\/g, '/');
+  console.log(imagePath)
+
+  await connection.query(
     "SELECT * FROM usuarios WHERE Username = ? OR email = ?",
     [username, email],
     async (error, results) => {
@@ -50,17 +59,16 @@ const postUsuario = async (request, response) => {
         if (existingUser) {
           return response
             .status(400)
-            .json({ error: "El nombre de usuario ya esta en uso" });
+            .json({ error: "El nombre de usuario ya está en uso" });
         } else {
           return response
             .status(400)
-            .json({ error: "El correo electronico ya esta en uso" });
+            .json({ error: "El correo electrónico ya está en uso" });
         }
-      } 
-      else{
+      } else {
         await connection.query(
-          "INSERT INTO usuarios (ID_Rol, username, email, password, fechareg) VALUES (?,?,?,?,?)",
-          [ID_Rol, username, email, hashpassword, fechareg],
+          "INSERT INTO usuarios (ID_Rol, username, email, password, fechareg, imagen) VALUES (?,?,?,?,?,?)",
+          [ID_Rol, username, email, hashpassword, fechareg, imagePath],
           async (error, results) => {
             if (error) {
               console.log(error);
@@ -77,6 +85,7 @@ const postUsuario = async (request, response) => {
     }
   );
 };
+
 
 const updateUsuario = async (request, response) => {
   const UsuarioID = request.params.ID_Usuario;

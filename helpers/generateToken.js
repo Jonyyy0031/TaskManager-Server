@@ -5,6 +5,7 @@ const tokenSign = async (user) => {
         {
             ID_Usuario: user.ID_Usuario,
             ID_Rol: user.ID_Rol,
+            imagen: user.Imagen,
         },
         process.env.JWT_SECRET,
         {
