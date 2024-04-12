@@ -8,7 +8,7 @@ const tokenSign = async (user) => {
         },
         process.env.JWT_SECRET,
         {
-            expiresIn: "1h",
+            expiresIn: "5m",
         }
     );
 }
@@ -21,9 +21,6 @@ const verifyToken = async (token) =>{
     }
 }
 
-const decodeSign = (token) => {
-
-}
 export {
     tokenSign,
     verifyToken,

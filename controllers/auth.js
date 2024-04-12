@@ -51,11 +51,11 @@ const login = async (req, res) => {
         if (results.length > 0) {
           const existingUser = results.find((user) => user.Username === username);
           if (existingUser) {
-            response
+            return response
               .status(400)
               .json({ error: "El nombre de usuario ya está en uso" });
           } else {
-            response
+            return response
               .status(400)
               .json({ error: "El correo electrónico ya está en uso" });
           }
@@ -66,7 +66,6 @@ const login = async (req, res) => {
             (error, results) => {
               if (error) {
                 console.log(error);
-                console.log(hashpassword);
                 return response.status(500).json({ error: "Error de servidor" });
               }
               response

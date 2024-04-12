@@ -14,7 +14,7 @@ const checkAuth = async (req, res, next) => {
             }
         
     } else {
-        res.status(401).json({ error: "Falta el encabezado de autorización" });
+        res.status(401).json({ error: "Falta el encabezado de autorizacion" });
     }
 };
 
