@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-import path from "path"
 dotenv.config();
 
 import { connection } from "../config/config.js";
@@ -42,10 +41,6 @@ const postUsuario = async (request, response) => {
     return response.status(400).json({ error: "No se ha proporcionado ninguna imagen" });
   }
 
-
-  const imagePath = request.file.path.replace(/\\/g, '/');
-  console.log(imagePath)
-
   await connection.query(
     "SELECT * FROM usuarios WHERE Username = ? OR email = ?",
     [username, email],
@@ -59,13 +54,15 @@ const postUsuario = async (request, response) => {
         if (existingUser) {
           return response
             .status(400)
-            .json({ error: "El nombre de usuario ya está en uso" });
+            .json({ error: "El nombre de usuario ya esta en uso" });
         } else {
           return response
             .status(400)
-            .json({ error: "El correo electrónico ya está en uso" });
+            .json({ error: "El correo electronico ya esta en uso" });
         }
       } else {
+        const imagePath = request.file.path.replace(/\\/g, '/');
+        console.log(imagePath)
         await connection.query(
           "INSERT INTO usuarios (ID_Rol, username, email, password, fechareg, imagen) VALUES (?,?,?,?,?,?)",
           [ID_Rol, username, email, hashpassword, fechareg, imagePath],

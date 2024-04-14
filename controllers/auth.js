@@ -17,7 +17,7 @@ const login = async (req, res) => {
       }
 
       if (results.length === 0) {
-        return res.status(401).json({ error: "Credenciales inválidas" });
+        return res.status(401).json({ error: "Credenciales invalidas" });
       }
 
       const user = results[0];
@@ -28,7 +28,7 @@ const login = async (req, res) => {
       if (checkPassword) {
         return res.status(200).json({data: user, tokenSession});
       } else {
-        return res.status(401).json({ error: "Credenciales inválidas" });
+        return res.status(401).json({ error: "Credenciales invalidas" });
       }
     }
   );
@@ -40,6 +40,11 @@ const login = async (req, res) => {
     const ID_Rol = 1;
     const fechareg = new Date().toISOString().slice(0, 10);
     const hashpassword = await encrypt(password);
+    
+    if (!request.file) {
+      return response.status(400).json({ error: "No se ha proporcionado ninguna imagen" });
+    }
+
     await connection.query(
       "SELECT * FROM usuarios WHERE Username = ? OR Email = ?",
       [username, email],
@@ -53,16 +58,18 @@ const login = async (req, res) => {
           if (existingUser) {
             return response
               .status(400)
-              .json({ error: "El nombre de usuario ya está en uso" });
+              .json({ error: "El nombre de usuario ya esta en uso" });
           } else {
             return response
               .status(400)
-              .json({ error: "El correo electrónico ya está en uso" });
+              .json({ error: "El correo electronico ya esta en uso" });
           }
         } else {
+          const imagePath = request.file.path.replace(/\\/g, '/');
+          console.log(imagePath)
           connection.query(
-            "INSERT INTO usuarios (ID_Rol, username, email, password, fechareg) VALUES (?, ?, ?, ?, ?)",
-            [ID_Rol, username, email, hashpassword, fechareg],
+            "INSERT INTO usuarios (ID_Rol, username, email, password, fechareg, imagen) VALUES (?, ?, ?, ?, ?, ?)",
+            [ID_Rol, username, email, hashpassword, fechareg, imagePath],
             (error, results) => {
               if (error) {
                 console.log(error);

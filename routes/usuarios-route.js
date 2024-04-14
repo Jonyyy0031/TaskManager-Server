@@ -3,7 +3,6 @@
     import {checkRoleAuth} from "../middleware/roleAuth.js"
     import { getUsuarios, postUsuario, updateUsuario, delUsuarios, getUsuariobyID } from "../controllers/usuarios.js";
     import multer from "multer";
-    import sharp from "sharp";
 
     const router = Router();
 
@@ -19,12 +18,10 @@
 
     const upload = multer({storage})
 
-    router.post("/usuarios", checkAuth, checkAuth, checkRoleAuth(1), upload.single('file'),  postUsuario);
-
 
     router.get("/usuarios", checkAuth, checkRoleAuth(1), getUsuarios);
     router.get("/usuarios/:ID_Usuario", checkAuth, checkRoleAuth(1), getUsuariobyID);
-
+    router.post("/usuarios", checkAuth, checkRoleAuth(1), upload.single('file'),  postUsuario);
     router.patch("/usuarios/:ID_Usuario", checkAuth, checkRoleAuth(1), upload.single('file'), updateUsuario);
     router.delete("/usuarios/:ID_Usuario",checkAuth, checkRoleAuth(1),  delUsuarios);
 

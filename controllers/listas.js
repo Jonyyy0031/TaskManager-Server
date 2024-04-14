@@ -4,7 +4,8 @@ dotenv.config();
 import { connection } from "../config/config.js";
 
 const getListas = async (request, response) => {
-   await connection.query("SELECT * FROM listas", (error, results) => {
+   await connection.query("SELECT * FROM listas",
+   (error, results) => {
     if (error) {
       console.log(error);
       return response.status(500).json({ error: "Error de servidor" });
@@ -13,25 +14,38 @@ const getListas = async (request, response) => {
   });
 };
 
-const getNombreListabyID = async (request, response) => {
-  const ListaID = request.params.ID_Lista;
+const getListaByID = async (request, response) => {
+  const ID_Lista = request.params.ID_Lista;
+  await connection.query("SELECT * FROM listas WHERE ID_Lista = ?",
+  [ID_Lista],
+  (error, results) => {
+   if (error) {
+     console.log(error);
+     return response.status(500).json({ error: "Error de servidor" });
+   }
+   response.status(200).json(results[0]);
+ });
+};
+
+const getListasbyIDUsuario = async (request, response) => {
+  const ID_Usuario = request.params.ID_Usuario;
    await connection.query(
-    "SELECT Nombre FROM roles WHERE ID_Lista = ?",
-    [ListaID],
+    "SELECT * FROM listas WHERE ID_Usuario = ?",
+    [ID_Usuario],
     (error, results) => {
       if (error) {
         console.log(error);
         return response.status(500).json({ error: "error de servidor" });
       }
-      return response.status(201).json(results[0]);
+      response.status(201).json(results);
     }
   );
 };
 
 const postListas = async (request, response) => {
-  const { Nombre } = request.body;
+  const {ID_Usuario, Nombre } = request.body;
    await connection.query(
-    "SELECT * FROM roles WHERE Nombre = ?",
+    "SELECT * FROM listas WHERE Nombre = ?",
     [Nombre],
     (error, results) => {
       if (error) {
@@ -39,11 +53,11 @@ const postListas = async (request, response) => {
         return response.status(500).json({ error: "error de servidor" });
       }
       if (results.length > 0) {
-        response.status(400).json({ error: "El nombre del rol ya existe" });
+        response.status(400).json({ error: "El nombre de la lista ya existe" });
       } else {
         connection.query(
-          "INSERT INTO roles (Nombre) VALUES (?)",
-          [Nombre],
+          "INSERT INTO listas (ID_Usuario, Nombre) VALUES (?,? )",
+          [ID_Usuario, Nombre],
           (error, results) => {
             if (error) {
               console.log(error);
@@ -51,7 +65,7 @@ const postListas = async (request, response) => {
             }
             response
               .status(201)
-              .json({ "Rol añadido correctamente": results.affectedRows });
+              .json({ "Lista añadida correctamente": results.affectedRows });
           }
         );
       }
@@ -60,10 +74,10 @@ const postListas = async (request, response) => {
 };
 
 const updateListas = async (request, response) => {
-  const RolID = request.params.ID_Rol;
+  const ID_Lista = request.params.ID_Lista;
   const { Nombre } = request.body;
   await connection.query(
-    "SELECT COUNT(*) AS count FROM roles WHERE Nombre = ?",
+    "SELECT COUNT(*) AS count FROM listas WHERE Nombre = ?",
     [Nombre],
     (error, results) => {
       if (error) {
@@ -76,12 +90,12 @@ const updateListas = async (request, response) => {
       if (count > 0) {
         return response
           .status(400)
-          .json({ error: "El nombre del rol ya existe" });
+          .json({ error: "El nombre de la lista ya existe" });
       }
 
       connection.query(
-        "UPDATE roles SET Nombre = IFNULL(?, Nombre) WHERE ID_Rol = ?",
-        [Nombre, RolID],
+        "UPDATE listas SET Nombre = IFNULL(?, Nombre) WHERE ID_Lista = ?",
+        [Nombre, ID_Lista],
         (error, results) => {
           if (error) {
             console.log(error);
@@ -89,7 +103,7 @@ const updateListas = async (request, response) => {
           }
           response
             .status(201)
-            .json({ "Rol editado correctamente": results.affectedRows });
+            .json({ "Lista editada correctamente": results.affectedRows });
         }
       );
     }
@@ -99,7 +113,7 @@ const updateListas = async (request, response) => {
 const delListas = async (request, response) => {
   const ID_Lista = request.params.ID_Lista;
   await connection.query(
-    "DELETE FROM roles WHERE ID_Rol = ?",
+    "DELETE FROM listas WHERE ID_Lista = ?",
     [ID_Lista],
     (error, results) => {
       if (error) {
@@ -111,4 +125,4 @@ const delListas = async (request, response) => {
   );
 };
 
-export { getListas, getNombreListabyID, postListas, updateListas, delListas };
+export { getListas, getListaByID, getListasbyIDUsuario, postListas, updateListas, delListas };
