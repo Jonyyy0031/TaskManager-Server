@@ -37,7 +37,7 @@ const login = async (req, res) => {
 
   const register = async (request, response) => {
     const { username, email, password } = request.body;
-    const ID_Rol = 1;
+    const ID_Rol = 2;
     const fechareg = new Date().toISOString().slice(0, 10);
     const hashpassword = await encrypt(password);
     
